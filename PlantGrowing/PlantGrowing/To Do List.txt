@@ -1,0 +1,3 @@
+Change color of starting location of plant
+Plant is smaller than starting sprite
+Try the player changing mode to control plant

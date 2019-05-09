@@ -6,6 +6,8 @@ function preload()
 	//image assets
 	game.load.image('box', 'assets/Box.png');
 	game.load.image('player', 'assets/Player.png');
+	game.load.image('plant', 'assets/Plant.png');
+	game.load.image('lightMode', 'assets/Player_LightMode.png');
 }
 
 //global variables
@@ -13,6 +15,8 @@ var platforms;
 var plant;
 var player;
 var input;
+var isLightMode = false;
+var spaceKey;
 
 function create() 
 {
@@ -27,7 +31,7 @@ function create()
 	platforms.enableBody = true;
 
 	//create a plant to start from
-	plant = platforms.create(game.world.width / 2, game.world.height / 2, 'box');
+	plant = platforms.create(game.world.width / 2, game.world.height / 2, 'plant');
 	plant.body.immovable = true;
 
 	//adds player and its physics
@@ -36,6 +40,8 @@ function create()
 
 	//object to store keyboard inputs
 	input = game.input.keyboard.createCursorKeys();
+
+	spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 }
 
 function update() 
@@ -52,7 +58,7 @@ function update()
 
 	//creates plants if left mouse is being pressed and if another plant object does not exist
 	//at the mouse's cursor coordinate
-	if (game.input.activePointer.isDown && !isOccupied(game.input.mousePointer.x, game.input.mousePointer.y) && platforms.total < 100)
+	if (game.input.activePointer.isDown && !isOccupied(game.input.mousePointer.x, game.input.mousePointer.y) && platforms.total < 100 && isLightMode)
 	{
 		//makes a theoretical plant to see if it a plant
 		//can officially be made here
@@ -75,24 +81,39 @@ function update()
 	}
 
 	//the following if/else statements allows for player movement
-	if (input.left.isDown)
+	if (input.left.isDown && !isLightMode)
 	{
 		player.body.velocity.x = -150;
 	}
 
-	else if (input.right.isDown)
+	else if (input.right.isDown && !isLightMode)
 	{
 		player.body.velocity.x = 150;
 	}
 
-	else if (input.up.isDown)
+	else if (input.up.isDown && !isLightMode)
 	{
 		player.body.velocity.y = -150;
 	}
 
-	else if (input.down.isDown)
+	else if (input.down.isDown && !isLightMode)
 	{
 		player.body.velocity.y = 150;
+	}
+
+	//upon pressing the spacebar, you can alternate
+	//from player mode and light mode
+	if (spaceKey.downDuration(1) && !isLightMode)
+	{
+		console.log('light mode on');
+		isLightMode = true;
+		player.loadTexture('lightMode');
+	}
+	else if(spaceKey.downDuration(1) && isLightMode)
+	{
+		console.log('light mode off');
+		isLightMode = false;
+		player.loadTexture('player');
 	}
 }
 
